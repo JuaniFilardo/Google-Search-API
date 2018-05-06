@@ -70,9 +70,9 @@ def search(query, pages=1, lang='en', ncr=False, void=True):
         if html:
             soup = BeautifulSoup(html, "html.parser")
             divs = soup.findAll("div", attrs={"class": "g"})
+            
             results_div = soup.find("div", attrs={"id": "resultStats"})
-            results_text = results_div.get_text()
-            number_of_results = _get_number_of_results(results_text) if results_text else 0
+            number_of_results = _get_number_of_results(results_div)
 
             j = 0
             for li in divs:
@@ -167,12 +167,16 @@ def _get_cached(li):
             return urllib.parse.urljoin("http://www.google.com", link)
     return None
 
-def _get_number_of_results(results_div_text):
-    """Return the total number of results of a google search."""
-    if results_div_text:
-        regex = r"(?:About )?((?:\d+,)*\d+) results?"
-        m = match(regex, results_div_text)
-        results = int(m.groups()[0].replace(",",""))
-        return results
-    else:
+def _get_number_of_results(results_div):
+    """Return the total number of results of the google search.
+    Note that the returned value will be the same for all the GoogleResult
+    objects from a specific query."""
+    try:
+        results_div_text = results_div.get_text()
+        if results_div_text:
+            regex = r"(?:About )?((?:\d+,)*\d+) results?"
+            m = match(regex, results_div_text)
+            results = int(m.groups()[0].replace(",",""))
+            return results
+    except Exception as e:
         return 0

@@ -85,6 +85,7 @@ GoogleResult:
     self.cached # A link to the cached version of the page
     self.page # What page this result was on (When searching more than one page)
     self.index # What index on this page it was on
+    self.number_of_results # The total number of results the query returned
 ```
 
 *Description text parsing has some encoding problems to be resolved.*

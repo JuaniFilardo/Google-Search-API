@@ -48,11 +48,13 @@ def _get_search_url(query, page=0, per_page=10, lang='en', ncr=False):
 
     params = urlencode(params)
 
-    # Workaround to switch between http and https, since this way
-    # it seems to avoid the 503 error when performing a lot of queries. 
+    # @author JuaniFilardo:
+    # Workaround to switch between http and https, since this maneuver
+    # seems to avoid the 503 error when performing a lot of queries.
     # Weird, but it works.
     # You may also wanna wait some time between queries, say, randint(50,65)
-    # between each query, and randint(180,240) every 100 queries.
+    # between each query, and randint(180,240) every 100 queries, which is
+    # what I found useful.
     https = int(time.time()) % 2 == 0
     bare_url = u"https://www.google.com/search?" if https else u"http://www.google.com/search?"
     url = bare_url + params
@@ -71,7 +73,8 @@ def get_html(url):
     except urllib.error.HTTPError as e:
         print("Error accessing:", url)
         if e.code == 503:
-            sys.exit("503 Error: service is currently unavailable. Program will exit.")
+            print("503 Error: service is currently unavailable." \
+            "For more information check https://support.google.com/websearch/answer/86640")
         return None
     except Exception as e:
         print("Error accessing:", url)
